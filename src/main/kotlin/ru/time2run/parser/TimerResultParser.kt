@@ -1,7 +1,6 @@
 package ru.time2run.parser
 
 import ru.time2run.model.TimerResult
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
 
@@ -9,7 +8,7 @@ fun isTimerResult(csv: String): Boolean {
     return try {
         val parts = csv.lineSequence().drop(1).first().split(",")
         parts[0].trim().toInt()
-        LocalDateTime.parse(parts[1].trim(), DATE_TIME_FORMAT)
+//        LocalDateTime.parse(parts[1].trim(), DATE_TIME_FORMAT) // TODO  даты от IOS и Android приходят в разном формате, надо научится их парсить правильно
         true
     } catch (e: NumberFormatException) {
         false
