@@ -45,13 +45,15 @@ class ResultService(private val parserResults: ParserResults, private val db: DB
     private fun getResult(athletes: List<Athlete>): List<Time2RunResult> {
         val athletesMap = athletes.associateBy { it.barcodeId }
         val scannerMap = parserResults.scannerResults.associateBy { it.position }
+        val isFirstPosZero = parserResults.isFirstPositionIsZero()
         return parserResults.timerResults.map {
-            val scannerResult = scannerMap[it.position]
+            val position = if (isFirstPosZero) it.position + 1 else it.position
+            val scannerResult = scannerMap[position]
             val athlete = if (scannerResult != null) {
                 athletesMap[scannerResult.athleteId]
             } else null
             Time2RunResult(
-                it.position,
+                position,
                 it.time,
                 athlete?.name
             )

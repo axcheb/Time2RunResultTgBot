@@ -22,6 +22,15 @@ class ParserResults {
         return (scannerResults.isNotEmpty() && timerResults.isNotEmpty())
     }
 
+    /**
+     * Проверка значения первой позиции.
+     * Мобильные приложения разных версий начинают отсчет позиций либо с 0, либо с 1.
+     */
+    fun isFirstPositionIsZero(): Boolean {
+        val tr = timerResults
+        return (tr.isNotEmpty() && tr.first().position == 0)
+    }
+
     private fun checkLifetime() {
         if (System.currentTimeMillis() - lastUpdate > AppProps.storageLifetime) {
             scannerResults = emptyList()
