@@ -49,19 +49,18 @@ class ResultService(private val parserResults: ParserResults, private val lost: 
         val positionShift = if (isFirstPosZero) 1 else 0
         var positionAlter = if (isFirstPosZero) 1 else 0
         val lostSet = lost.toSet()
-        return parserResults.timerResults.mapNotNull {
+        return parserResults.timerResults.map {
             val shiftedPosition = it.position + positionShift
             if (shiftedPosition in lostSet) {
-                positionAlter --
-                return@mapNotNull null
+                positionAlter ++
             }
             val position = it.position + positionAlter
-            val scannerResult = scannerMap[shiftedPosition]
+            val scannerResult = scannerMap[position]
             val athlete = if (scannerResult != null) {
                 athletesMap[scannerResult.athleteId]
             } else null
             Time2RunResult(
-                position,
+                shiftedPosition,
                 it.time,
                 athlete?.name
             )
