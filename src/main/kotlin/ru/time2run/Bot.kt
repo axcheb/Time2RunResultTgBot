@@ -7,13 +7,17 @@ import dev.inmo.tgbotapi.extensions.api.send.media.sendDocument
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.telegramBotWithBehaviourAndLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.command
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.commandWithArgs
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onMedia
 import dev.inmo.tgbotapi.requests.abstracts.MultipartFile
 import dev.inmo.tgbotapi.types.ChatId
+import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
+import dev.inmo.tgbotapi.types.message.content.TextContent
 import dev.inmo.tgbotapi.utils.StorageFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import mu.KotlinLogging
+import ru.time2run.model.ChatParams
 import ru.time2run.model.ChatStorage
 import ru.time2run.model.HEADER
 import ru.time2run.model.ParserResults
@@ -59,6 +63,30 @@ suspend fun runBot(db: DB) {
         }
         command("start") {
             sendMessage(it.chat.id, "Пришли мне два csv файла от таймера и сканера. Я пришлю тебе таблицу результатов.")
+        }
+        commandWithArgs("lost") { commonMessage: CommonMessage<TextContent>, strings: Array<String> ->
+            val chatId = commonMessage.chat.id
+            if (strings.isEmpty()) {
+                val chatParams = db.transaction {
+                    chatParamsRepository.selectBy(chatId.chatId)
+                }
+                if (chatParams == null || chatParams.lostPositions.isEmpty()) {
+                    sendMessage(chatId, "Потерянных карточек нет!")
+                } else {
+                    sendMessage(chatId, "Потерянные карточки: ${chatParams.lostPositions.joinToString(", ")}")
+                }
+                return@commandWithArgs
+            }
+
+            var message = "Запомнил! Потеряны карточки: ${strings.joinToString(", ")}"
+            db.transaction {
+                try {
+                    chatParamsRepository.save(ChatParams(chatId.chatId, strings.map { it.toInt() }))
+                } catch (_: NumberFormatException) {
+                    message = "Я ждал чисел через пробел. Но получил что-то иное."
+                }
+            }
+            sendMessage(chatId, message)
         }
     }.second.join()
 }
