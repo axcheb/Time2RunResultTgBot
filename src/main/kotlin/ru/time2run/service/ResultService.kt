@@ -11,7 +11,7 @@ import ru.time2run.skrapeit.scrapeAthlete
 
 private val logger = KotlinLogging.logger {}
 
-class ResultService(private val parserResults: ParserResults, private val db: DB) {
+class ResultService(private val parserResults: ParserResults, private val lost: List<Int>, private val db: DB) {
 
     suspend fun handle(): List<Time2RunResult> {
         val athleteIds = parserResults.getAthleteIds()
@@ -46,9 +46,17 @@ class ResultService(private val parserResults: ParserResults, private val db: DB
         val athletesMap = athletes.associateBy { it.barcodeId }
         val scannerMap = parserResults.scannerResults.associateBy { it.position }
         val isFirstPosZero = parserResults.isFirstPositionIsZero()
-        return parserResults.timerResults.map {
-            val position = if (isFirstPosZero) it.position + 1 else it.position
-            val scannerResult = scannerMap[position]
+        val positionShift = if (isFirstPosZero) 1 else 0
+        var positionAlter = if (isFirstPosZero) 1 else 0
+        val lostSet = lost.toSet()
+        return parserResults.timerResults.mapNotNull {
+            val shiftedPosition = it.position + positionShift
+            if (shiftedPosition in lostSet) {
+                positionAlter --
+                return@mapNotNull null
+            }
+            val position = it.position + positionAlter
+            val scannerResult = scannerMap[shiftedPosition]
             val athlete = if (scannerResult != null) {
                 athletesMap[scannerResult.athleteId]
             } else null

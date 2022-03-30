@@ -39,7 +39,10 @@ suspend fun runBot(db: DB) {
             val pathedFile = bot.getFileAdditionalInfo(it.content.media)
             val fileSizeBytes = pathedFile.fileSize
             if (fileSizeBytes != null && fileSizeBytes > 30_000L) {
-                sendMessage(it.chat.id, "Файл слишком большой. Обратитесь к администратору бота, чтобы увеличить размер обрабатываемого файла.")
+                sendMessage(
+                    it.chat.id,
+                    "Файл слишком большой. Обратитесь к администратору бота, чтобы увеличить размер обрабатываемого файла."
+                )
                 return@onMedia
             }
             val csvFile = String(bot.downloadFile(pathedFile))
@@ -93,12 +96,24 @@ suspend fun runBot(db: DB) {
 
 suspend fun handleResults(bot: TelegramBot, db: DB, chatId: ChatId, parserResults: ParserResults) {
     bot.sendMessage(chatId, "Обрабатыаю результаты. Это может занять какое-то время...")
-    val service = ResultService(parserResults, db)
+
+    val chatParams = db.transaction {
+        chatParamsRepository.selectBy(chatId.chatId)
+    }
+    val lost = chatParams?.lostPositions ?: emptyList()
+    val service = ResultService(parserResults, lost, db)
     parserResults.startScrape()
     try {
         val results = service.handle()
         val csv = HEADER + results.joinToString("\n") { it.toCsvString() }
-        bot.sendDocument(chatId, MultipartFile(StorageFile("results-${LocalDate.now()}.csv", csv.toByteArray())))
+        bot.sendDocument(
+            chatId,
+            MultipartFile(StorageFile("results-${LocalDate.now()}.csv", csv.toByteArray())),
+            text = "Результаты были сформированы с учетом потерянных карточек позиций с номерами: ${lost.joinToString(", ")}\n" +
+                    "Чтобы изменить список потерянных карточек, используйте команду /lost\n" +
+                    "Например, чтобы указать, что потеряны карточки 26, 31 и 42, наберите:\n" +
+                    "/lost 26 31 42"
+        )
     } catch (e: Exception) {
         logger.catching(e)
     } finally {
