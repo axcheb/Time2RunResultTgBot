@@ -1,7 +1,7 @@
+package ru.time2run
+
 import org.flywaydb.core.Flyway
 import org.sqlite.SQLiteDataSource
-import ru.time2run.DB
-import ru.time2run.runBot
 import javax.sql.DataSource
 
 val ds = SQLiteDataSource().apply {

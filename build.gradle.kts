@@ -43,7 +43,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     manifest {
         attributes["Implementation-Title"] = "Time2Run TG bot"
         attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "MainKt"
+        attributes["Main-Class"] = "ru.time2run.MainKt"
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(configurations.runtimeClasspath.get().map{ if (it.isDirectory) it else zipTree(it) })
