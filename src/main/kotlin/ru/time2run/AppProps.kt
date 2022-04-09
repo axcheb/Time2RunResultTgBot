@@ -27,4 +27,7 @@ object AppProps {
     val storageLifetime: Long
         get() = TimeUnit.DAYS.toMillis(appProperties.getProperty("storageLifetimeDay").toLong())
 
+    val maxFileSizeBytes: Long
+        get() = appProperties.getProperty("maxFileSizeBytes").toLong()
+
 }

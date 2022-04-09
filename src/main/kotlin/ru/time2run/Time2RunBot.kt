@@ -57,7 +57,7 @@ class Time2RunBot(private val db: DB) {
     private suspend fun onMediaCommand(bot: TelegramBot, mediaMessage: CommonMessage<MediaContent>) {
         val attachedFile = bot.getFileAdditionalInfo(mediaMessage.content.media)
         val fileSizeBytes = attachedFile.fileSize
-        if (fileSizeBytes != null && fileSizeBytes > 30_000L) {
+        if (fileSizeBytes != null && fileSizeBytes > AppProps.maxFileSizeBytes) {
             bot.sendMessage(
                 mediaMessage.chat.id,
                 "Файл слишком большой. Обратитесь к администратору бота, чтобы увеличить размер обрабатываемого файла."
