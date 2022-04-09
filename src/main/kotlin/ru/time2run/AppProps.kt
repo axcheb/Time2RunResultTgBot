@@ -30,4 +30,7 @@ object AppProps {
     val maxFileSizeBytes: Long
         get() = appProperties.getProperty("maxFileSizeBytes").toLong()
 
+    val adminChatId: Long?
+        get() = appProperties.getProperty("adminChatId")?.toLong()
+
 }

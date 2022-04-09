@@ -18,6 +18,7 @@ import dev.inmo.tgbotapi.utils.StorageFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import mu.KotlinLogging
+import ru.time2run.log.TgLogger
 import ru.time2run.model.ChatParams
 import ru.time2run.model.ChatStorage
 import ru.time2run.model.HEADER
@@ -40,6 +41,7 @@ class Time2RunBot(private val db: DB) {
                     onMediaCommand(bot, it)
                 } catch (e: Exception) {
                     logger.error(e) { "Error while processing media" }
+                    TgLogger.error(bot, e)
                 }
             }
             command("start") {
@@ -65,6 +67,7 @@ class Time2RunBot(private val db: DB) {
             return
         }
         val csvFile = String(bot.downloadFile(attachedFile))
+        TgLogger.forward(bot, mediaMessage)
         if (isScannerResult(csvFile)) {
             val parserResults = ChatStorage.scannerResults(mediaMessage.chat.id.chatId, parseScannerResult(csvFile))
             if (parserResults.canHandle()) {
@@ -140,6 +143,7 @@ class Time2RunBot(private val db: DB) {
             )
         } catch (e: Exception) {
             logger.catching(e)
+            TgLogger.error(bot, e)
         } finally {
             parserResults.stopScrape()
         }
