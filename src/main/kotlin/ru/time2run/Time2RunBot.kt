@@ -124,7 +124,6 @@ class Time2RunBot(private val db: DB) {
         }
         val lost = chatParams?.lostPositions ?: emptyList()
         val service = ResultService(parserResults, lost, db)
-        parserResults.startScrape()
         try {
             val results = service.handle()
             val csv = HEADER + results.joinToString("\n") { it.toCsvString() }

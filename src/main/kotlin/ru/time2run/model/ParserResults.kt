@@ -4,7 +4,6 @@ import ru.time2run.AppProps
 
 class ParserResults {
     private var lastUpdate: Long = System.currentTimeMillis()
-    private var isScrapingData = false
     var scannerResults: List<ScannerResult> = arrayListOf()
         set(value) {
             checkLifetime()
@@ -39,14 +38,9 @@ class ParserResults {
         lastUpdate = System.currentTimeMillis()
     }
 
-    fun startScrape() {
-        isScrapingData = true
-    }
-
     fun stopScrape() {
         scannerResults = emptyList()
         timerResults = emptyList()
-        isScrapingData = false
     }
 
 }
