@@ -34,34 +34,37 @@ private val logger = KotlinLogging.logger {}
 
 suspend fun runBot(db: DB) {
     telegramBotWithBehaviourAndLongPolling(AppProps.botToken, CoroutineScope(Dispatchers.IO)) {
-        onMedia(initialFilter = null) { it ->
-
-            val pathedFile = bot.getFileAdditionalInfo(it.content.media)
-            val fileSizeBytes = pathedFile.fileSize
-            if (fileSizeBytes != null && fileSizeBytes > 30_000L) {
-                sendMessage(
-                    it.chat.id,
-                    "Файл слишком большой. Обратитесь к администратору бота, чтобы увеличить размер обрабатываемого файла."
-                )
-                return@onMedia
-            }
-            val csvFile = String(bot.downloadFile(pathedFile))
-            if (isScannerResult(csvFile)) {
-                val parserResults = chatStorage.scannerResults(it.chat.id.chatId, parseScannerResult(csvFile))
-                if (parserResults.canHandle()) {
-                    handleResults(this, db, it.chat.id, parserResults)
-                } else {
-                    sendMessage(it.chat.id, "Результат сканера принят. Жду результат таймера.")
+        onMedia(initialFilter = null) {
+            try {
+                val pathedFile = bot.getFileAdditionalInfo(it.content.media)
+                val fileSizeBytes = pathedFile.fileSize
+                if (fileSizeBytes != null && fileSizeBytes > 30_000L) {
+                    sendMessage(
+                        it.chat.id,
+                        "Файл слишком большой. Обратитесь к администратору бота, чтобы увеличить размер обрабатываемого файла."
+                    )
+                    return@onMedia
                 }
-            } else if (isTimerResult(csvFile)) {
-                val parserResults = chatStorage.timerResults(it.chat.id.chatId, parseTimerResult(csvFile))
-                if (parserResults.canHandle()) {
-                    handleResults(this, db, it.chat.id, parserResults)
+                val csvFile = String(bot.downloadFile(pathedFile))
+                if (isScannerResult(csvFile)) {
+                    val parserResults = chatStorage.scannerResults(it.chat.id.chatId, parseScannerResult(csvFile))
+                    if (parserResults.canHandle()) {
+                        handleResults(this, db, it.chat.id, parserResults)
+                    } else {
+                        sendMessage(it.chat.id, "Результат сканера принят. Жду результат таймера.")
+                    }
+                } else if (isTimerResult(csvFile)) {
+                    val parserResults = chatStorage.timerResults(it.chat.id.chatId, parseTimerResult(csvFile))
+                    if (parserResults.canHandle()) {
+                        handleResults(this, db, it.chat.id, parserResults)
+                    } else {
+                        sendMessage(it.chat.id, "Результат таймера принят. Жду результат сканера.")
+                    }
                 } else {
-                    sendMessage(it.chat.id, "Результат таймера принят. Жду результат сканера.")
+                    sendMessage(it.chat.id, "Не могу обработать этот файл.")
                 }
-            } else {
-                sendMessage(it.chat.id, "Не могу обработать этот файл.")
+            } catch (e: Exception) {
+                logger.error(e) { "Error while processing media" }
             }
         }
         command("start") {
