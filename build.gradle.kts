@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("kapt") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
+    kotlin("kapt") version "1.6.20"
 }
 
 group = "ru.time2run"
@@ -18,14 +18,14 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
-    implementation("dev.inmo:tgbotapi:0.38.8")
+    implementation("dev.inmo:tgbotapi:0.38.10")
 
     implementation("it.skrape:skrapeit:1.2.1")
 
     implementation("com.github.mfarsikov:kotlite-core:0.6.0")
     kapt("com.github.mfarsikov:kotlite-kapt:0.6.0")
 
-    implementation("org.flywaydb:flyway-core:8.5.2")
+    implementation("org.flywaydb:flyway-core:8.5.4")
 
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
 
