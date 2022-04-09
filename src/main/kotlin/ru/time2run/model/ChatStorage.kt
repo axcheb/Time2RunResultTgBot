@@ -2,7 +2,7 @@ package ru.time2run.model
 
 import java.util.concurrent.ConcurrentHashMap
 
-class ChatStorage {
+object ChatStorage {
     private val chatId2Result: ConcurrentHashMap<Long, ParserResults> = ConcurrentHashMap()
 
     fun scannerResults(chatId: Long, scannerResults: List<ScannerResult>): ParserResults {

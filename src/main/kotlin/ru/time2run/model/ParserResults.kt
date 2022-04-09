@@ -4,12 +4,12 @@ import ru.time2run.AppProps
 
 class ParserResults {
     private var lastUpdate: Long = System.currentTimeMillis()
-    var scannerResults: List<ScannerResult> = arrayListOf()
+    var scannerResults: List<ScannerResult> = emptyList()
         set(value) {
             checkLifetime()
             field = value
         }
-    var timerResults: List<TimerResult> = arrayListOf()
+    var timerResults: List<TimerResult> = emptyList()
         set(value) {
             checkLifetime()
             field = value

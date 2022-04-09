@@ -29,8 +29,6 @@ import ru.time2run.parser.parseTimerResult
 import ru.time2run.service.ResultService
 import java.time.LocalDate
 
-private val chatStorage = ChatStorage()
-
 private val logger = KotlinLogging.logger {}
 
 class Time2RunBot(private val db: DB) {
@@ -68,14 +66,14 @@ class Time2RunBot(private val db: DB) {
         }
         val csvFile = String(bot.downloadFile(attachedFile))
         if (isScannerResult(csvFile)) {
-            val parserResults = chatStorage.scannerResults(mediaMessage.chat.id.chatId, parseScannerResult(csvFile))
+            val parserResults = ChatStorage.scannerResults(mediaMessage.chat.id.chatId, parseScannerResult(csvFile))
             if (parserResults.canHandle()) {
                 handleResults(bot, mediaMessage.chat.id, parserResults)
             } else {
                 bot.sendMessage(mediaMessage.chat.id, "Результат сканера принят. Жду результат таймера.")
             }
         } else if (isTimerResult(csvFile)) {
-            val parserResults = chatStorage.timerResults(mediaMessage.chat.id.chatId, parseTimerResult(csvFile))
+            val parserResults = ChatStorage.timerResults(mediaMessage.chat.id.chatId, parseTimerResult(csvFile))
             if (parserResults.canHandle()) {
                 handleResults(bot, mediaMessage.chat.id, parserResults)
             } else {
