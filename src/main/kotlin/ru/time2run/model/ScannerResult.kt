@@ -8,6 +8,4 @@ package ru.time2run.model
 data class ScannerResult(
     val athleteId: Int,
     val position: Int,
-//    TODO дата от Android и IOS приходит в  разном формате.
-//    val dateTime: LocalDateTime
 )

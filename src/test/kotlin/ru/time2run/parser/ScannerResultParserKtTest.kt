@@ -20,12 +20,10 @@ A2000002,P0001,08/01/2022 09:25:11"""
                 ScannerResult(
                     1000001,
                     2,
-//                    LocalDateTime.of(2022, Month.JANUARY, 8, 9, 24, 26)
                 ),
                 ScannerResult(
                     2000002,
                     1,
-//                    LocalDateTime.of(2022, Month.JANUARY, 8, 9, 25, 11)
                 )
             ),
             scannerResult

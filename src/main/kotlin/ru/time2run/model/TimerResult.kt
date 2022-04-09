@@ -12,6 +12,4 @@ import java.time.LocalTime
 data class TimerResult (
     val position: Int,
     val time: LocalTime,
-//    TODO дата от Android и IOS приходит в  разном формате.
-//    val dateTime: LocalDateTime,
 )

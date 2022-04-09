@@ -39,7 +39,6 @@ private fun parseScannerLine(line: String): ScannerResult? {
             ScannerResult(
                 parts[0].trim().drop(1).toInt(),
                 parts[1].trim().drop(1).toInt(),
-//                LocalDateTime.parse(parts[2].trim(), DATE_TIME_FORMAT)
             )
         } else null
     } catch (e: NumberFormatException) {

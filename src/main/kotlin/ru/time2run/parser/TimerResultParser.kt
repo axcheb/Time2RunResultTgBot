@@ -8,7 +8,6 @@ fun isTimerResult(csv: String): Boolean {
     return try {
         val parts = csv.lineSequence().drop(1).first().split(",")
         parts[0].trim().toInt()
-//        LocalDateTime.parse(parts[1].trim(), DATE_TIME_FORMAT) // TODO  даты от IOS и Android приходят в разном формате, надо научится их парсить правильно
         true
     } catch (e: NumberFormatException) {
         false
@@ -35,7 +34,6 @@ private fun parseTimerLine(line: String): TimerResult? {
             TimerResult(
                 parts[0].trim().toInt(),
                 LocalTime.parse(parts[2].trim()),
-//                LocalDateTime.parse(parts[1].trim(), DATE_TIME_FORMAT),
             )
         } else null
     } catch (e: NumberFormatException) {

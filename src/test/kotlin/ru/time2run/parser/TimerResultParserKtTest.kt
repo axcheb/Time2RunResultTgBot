@@ -20,12 +20,10 @@ ENDOFEVENT,20/03/2022 22:07:12"""
                 TimerResult(
                     1,
                     LocalTime.of(0, 18, 56),
-//                    LocalDateTime.of(2022, 3, 12, 9, 24, 42),
                 ),
                 TimerResult(
                     2,
                     LocalTime.of(0, 19, 9),
-//                    LocalDateTime.of(2022, 3, 12, 9, 24, 55)
                 )
             ),
             timerResult
