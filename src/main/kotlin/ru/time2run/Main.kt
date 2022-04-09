@@ -15,5 +15,6 @@ fun runMigrations(ds: DataSource) {
 suspend fun main() {
     runMigrations(ds)
     val db = DB(ds)
-    runBot(db)
+    val bot = Time2RunBot(db)
+    bot.runBot()
 }
