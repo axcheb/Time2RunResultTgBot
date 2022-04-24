@@ -25,7 +25,7 @@ object AppProps {
         get() = appProperties.getProperty("requestDelay").toLong()
 
     val storageLifetime: Long
-        get() = TimeUnit.DAYS.toMillis(appProperties.getProperty("storageLifetimeDay").toLong())
+        get() = TimeUnit.MINUTES.toMillis(appProperties.getProperty("storageLifetimeMinutes").toLong())
 
     val maxFileSizeBytes: Long
         get() = appProperties.getProperty("maxFileSizeBytes").toLong()
