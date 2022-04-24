@@ -9,7 +9,7 @@ object ChatStorage {
         val parserResults = chatId2Result.getOrPut(chatId) {
             ParserResults()
         }
-        parserResults.scannerResults = scannerResults
+        parserResults.setScannerResults(scannerResults)
         return parserResults
     }
 
@@ -17,7 +17,7 @@ object ChatStorage {
         val parserResults = chatId2Result.getOrPut(chatId) {
             ParserResults()
         }
-        parserResults.timerResults = timerResults
+        parserResults.setTimerResults(timerResults)
         return parserResults
     }
 }
