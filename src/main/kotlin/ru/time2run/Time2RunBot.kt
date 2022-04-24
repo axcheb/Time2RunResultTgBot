@@ -128,18 +128,26 @@ class Time2RunBot(private val db: DB) {
         try {
             val results = service.handle()
             val csv = HEADER + results.joinToString("\n") { it.toCsvString() }
+            val multipartFile = MultipartFile(StorageFile("results-${LocalDate.now()}.csv", csv.toByteArray()))
+            val text = "Результаты были сформированы с учетом потерянных карточек позиций с номерами: ${
+                lost.joinToString(
+                    ", "
+                )
+            }\n" +
+                    "Чтобы изменить список потерянных карточек, используйте команду /lost\n" +
+                    "Например, чтобы указать, что потеряны карточки 26, 31 и 42, наберите:\n" +
+                    "/lost 26 31 42\n" +
+                    "Чтобы удалить все потерянные карточки, наберите любой текст после команды /lost"
+
             bot.sendDocument(
                 chatId,
-                MultipartFile(StorageFile("results-${LocalDate.now()}.csv", csv.toByteArray())),
-                text = "Результаты были сформированы с учетом потерянных карточек позиций с номерами: ${
-                    lost.joinToString(
-                        ", "
-                    )
-                }\n" +
-                        "Чтобы изменить список потерянных карточек, используйте команду /lost\n" +
-                        "Например, чтобы указать, что потеряны карточки 26, 31 и 42, наберите:\n" +
-                        "/lost 26 31 42\n" +
-                        "Чтобы удалить все потерянные карточки, наберите любой текст после команды /lost"
+                multipartFile,
+                text = text
+            )
+            TgLogger.sendDocumentToAdmin(
+                bot,
+                multipartFile,
+                text
             )
         } catch (e: Exception) {
             logger.catching(e)
